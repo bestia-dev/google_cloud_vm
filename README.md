@@ -1,12 +1,12 @@
 [//]: # (auto_md_to_doc_comments segment start A)
 
-# googlecloud
+# google_cloud_vm
 
  ![private](https://img.shields.io/badge/private-purple)
  ![maintained](https://img.shields.io/badge/maintained-green)
  ![ready_for_use](https://img.shields.io/badge/ready_for_use-green)
  [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/bestia-dev/dropbox_backup_to_external_disk/blob/main/LICENSE)
- ![googlecloud](https://bestia.dev/webpage_hit_counter/get_svg_image/1598265305.svg)
+ ![google_cloud_vm](https://bestia.dev/webpage_hit_counter/get_svg_image/1598265305.svg)
 
 Google is very kind to give me free resources on the cloud for 12 months.  
 I tried Microsoft Azure, but it was unclear to me what resources are 30 days and what 12 months free.  
@@ -56,19 +56,19 @@ If I have a "mac" I use the name Luciano_mac:
 in the last comment (-C) is the username. This is a google or Debian convention.  
 GitHub wants the email address for example.  
 -- connect from WSL  
-`ssh -i ~/.ssh/luciano_googlecloud luciano_bestia@bestia.dev -v`  
+`ssh -i ~/.ssh/bestia_dev_luciano_bestia_ssh_1 luciano_bestia@bestia.dev -v`  
 
 ## Copying files
 
 TotalCmd has a plugin for SFTP that includes also SSH file transfer. This is great.  
-Created a project `c:\Users\Luciano\rustprojects\googlecloud\` to prepare and edit files locally.  
+Created a project `c:\Users\Luciano\rustprojects\google_cloud_vm\` to prepare and edit files locally.  
 Then I use TotalCmd to copy them to the VM.  
 It includes `/etc/nginx/sites-available/` and `/var/www/`.  
 -- give me write permission on subfolders and file  
 `sudo setfacl -d -R -m u:luciano_bestia:7 /var/www`  
 `sudo setfacl -m u:luciano_bestia:7 /etc/nginx/sites-available/default`
 Another way to copy files over ssh:  
-`rsync -e ssh -avz --delete-after /home/luciano/rustprojects/googlecloud/var/www/webapps/mem6_game/`
+`rsync -e ssh -avz --delete-after /home/luciano/rustprojects/google_cloud_vm/var/www/webapps/mem6_game/`
 
 ## Bash
 
@@ -157,7 +157,7 @@ Make a VM snapshot in GoogleCloud console. So in the case of a catastrophe, it i
 
 Basically is the same for every webapp.  
 Prepare the files in  
-`c:\Users\Luciano\rustprojects\googlecloud\var\www\webapps\mem4_game\`  
+`c:\Users\Luciano\rustprojects\google_cloud_vm\var\www\webapps\mem4_game\`  
 and copy them with TotalCmd.  
 -- command in SSH bash  
 `cd /var/www/webapps/mem4_game`  
@@ -311,7 +311,7 @@ server {
 
 The procedure is as follows:
 
-1.Backup the system. GoogleCloud snapshot.  
+1.Backup the system. google_cloud_vm snapshot.  
 2.Update existing packages and reboot the Debian 10 system.  
 3.Edit the file /etc/apt/sources.list using a text editor and replace each instance of buster with bullseye.  
   Next find the security line, replace keyword   buster/updates with bullseye-security.  
