@@ -2,7 +2,6 @@
 
 # google_cloud_vm
 
- ![private](https://img.shields.io/badge/private-purple)
  ![maintained](https://img.shields.io/badge/maintained-green)
  ![ready_for_use](https://img.shields.io/badge/ready_for_use-green)
  [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/bestia-dev/dropbox_backup_to_external_disk/blob/main/LICENSE)
