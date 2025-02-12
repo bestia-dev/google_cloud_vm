@@ -28,8 +28,8 @@ I am afraid of the possibility to have an enormous bill. So I went to Billing - 
 ## NOT FREE egress traffic
 
 Egress traffic is not free. It can accumulate a lot of cost if a DDOS attack want to download a lot of data.  
-The Billing budgets and alert don't really help. The interval to take Egress traffic under control is probably too slow, sometimes 24 hours. Then it just sends an email alert that can be missed. Later is already too late because the DDOS attack has already made your bill enourmous. We are talking easy 3000$ per month for a VM that is basically free. Crazy. Till last month I had on average to pay 0,71$/month for Egress traficc, but last month was the eye opening 3$/month. After researching I found out, that I am just lucky that it is not 3000$. Google will not limit my traffic in any way or form because they make money if I have crazy traffic. But this could never be organic traffic for a personal hobby website. That could be only a DDOS attack, or now we can call it Denial of Wallet, because they could empty my already empty wallet. Bad Google made no effort to cap or limit my spendings in any way. I am afraid of surprise enormous bills for basically nothing.
-How to solve this problem? I don't know. Maybe I could try to limit traffic on NGINX ?!? To keep the data under 30GB/month that is around 5$/month. My maximum acceptable cost for DDOS attacks. 
+The Billing budgets and alert don't really help. The interval to take Egress traffic under control is probably too slow, sometimes 24 hours. Then it just sends an email alert that can be missed. Later is already too late because the DDOS attack has already made your bill enormous. We are talking easy 3000$ per month for a VM that is basically free. Crazy. Till last month I had on average to pay 0,71$/month for Egress traffic, but last month was the eye opening 3$/month. After researching I found out, that I am just lucky that it is not 3000$. Google will not limit my traffic in any way or form because they make money if I have crazy traffic. But this could never be organic traffic for a personal hobby website. That could be only a DDOS attack, or now we can call it Denial of Wallet, because they could empty my already empty wallet. Bad Google made no effort to cap or limit my spending in any way. I am afraid of surprise enormous bills for basically nothing.
+How to solve this problem? I don't know. Maybe I could try to limit traffic on NGINX ?!? To keep the data under 30GB/month that is around 5$/month. My maximum acceptable cost for DDOS attacks.
 
 ## google cloud Debian VM
 
@@ -55,19 +55,30 @@ If I have a "mac" I use the name Luciano_mac:
 in the last comment (-C) is the username. This is a google or Debian convention.  
 GitHub wants the email address for example.  
 -- connect from WSL  
-`ssh -i ~/.ssh/bestia_dev_luciano_bestia_ssh_1 luciano_bestia@bestia.dev -v`  
+`ssh -i ~/.ssh/luciano_googlecloud luciano_bestia@bestia.dev -v`  
 
 ## Copying files
 
 TotalCmd has a plugin for SFTP that includes also SSH file transfer. This is great.  
-Created a project `c:\Users\Luciano\rustprojects\google_cloud_vm\` to prepare and edit files locally.  
+Created a project `c:\Users\Luciano\rustprojects\googlecloud\` to prepare and edit files locally.  
 Then I use TotalCmd to copy them to the VM.  
 It includes `/etc/nginx/sites-available/` and `/var/www/`.  
 -- give me write permission on subfolders and file  
 `sudo setfacl -d -R -m u:luciano_bestia:7 /var/www`  
 `sudo setfacl -m u:luciano_bestia:7 /etc/nginx/sites-available/default`
 Another way to copy files over ssh:  
-`rsync -e ssh -avz --delete-after /home/luciano/rustprojects/google_cloud_vm/var/www/webapps/mem6_game/`
+`rsync -e ssh -avz --delete-after /home/luciano/rustprojects/googlecloud/var/www/webapps/mem6_game/`
+
+For backup of the entire /var/www folder run on server:
+
+```bash
+pg_dump -F t -U admin -h localhost -p 5432 webpage_hit_counter > postgres_backup/webpage_hit_counter_backup_2024_07_23.tar
+tar --exclude='bestia.dev/guitaraoke/videos' -czvf 2024_07_23_backup_of_var_www.tar.gz /var/www 
+sudo tar -czvf 2024_07_23_backup_of_home_luciano_bestia.tar.gz /home/luciano_bestia 
+```
+
+Then use Totalcmd SSH to copy the backup file.  
+GitHub does not allow files bigger than 100MB, so I compressed these backup files with Zip as multiple files of 99_000_000 bytes.
 
 ## Bash
 
@@ -156,81 +167,42 @@ Make a VM snapshot in GoogleCloud console. So in the case of a catastrophe, it i
 
 Basically is the same for every webapp.  
 Prepare the files in  
-`c:\Users\Luciano\rustprojects\google_cloud_vm\var\www\webapps\mem4_game\`  
+`c:\Users\Luciano\rustprojects\googlecloud\var\www\webapps\mem4_game\`  
 and copy them with TotalCmd.  
 -- command in SSH bash  
 `cd /var/www/webapps/mem4_game`  
 -- make the file executable (only once)  
 `chmod +x mem4_server`  
--- to start the application in background with the command "screen" with a session_name  
-`screen -S mem4-8084`,
+-- to start the application in a new tab of Zellij
+name it mem4-8084
 -- start the game server  
 `sudo ./mem4_server 127.0.0.1 8084`  
 -- detach background process  
-`ctrl+a d`  
+session, detach
 --the next time attach to this process with  
-`screen -r mem4-8084`  
+`zellij attach`  
 
 ## Zellij command to execute after VM reboot
 
 Nginx is automatically started and so are static web-file-server pages:  
 bestia.dev/index.html, /mem1, /amafatt,...
 
+Postgres is also automatically started, I guess.  
 For the webapps I run them in separate sessions with Zellij multiplexer.
 
--- list the screen sessions  
-`screen -r`  
--- open the new session and start the game server, detach from session  
--- game mem2  
-`screen -S mem2-8082`  
-`cd /var/www/webapps/mem2_game;sudo ./mem2_server 127.0.0.1 8082`  
-`ctrl+a d`  
--- game mem3  
-`screen -S mem3-8083`  
-`cd /var/www/webapps/mem3_game;sudo ./mem3_server 127.0.0.1 8083`  
-`ctrl+a d`  
--- game mem4  
-`screen -S mem4-8084`  
-`cd /var/www/webapps/mem4_game;sudo ./mem4_server 127.0.0.1 8084`
-`ctrl+a d`  
--- game mem5  
-`screen -S mem5-8085`  
-`cd /var/www/webapps/mem5_game;sudo ./mem5_server 127.0.0.1 8085`  
-`ctrl+a d`  
+-- open new tabs for every application and run the commands  
+
 -- game mem6  
-`screen -S mem6-8086`  
-`cd /var/www/webapps/mem6_game;sudo ./mem6_server 127.0.0.1 8086`  
-`ctrl+a d`  
+`cd /var/www/webapps/mem6_game ; sudo ./mem6_server 127.0.0.1 8086`  
 -- cargo_crev_web web server  
-`screen -S cargo_crev_web_8051`  
-`cd /var/www/webapps/cargo_crev_web;./cargo_crev_web`  
-`ctrl+a d`  
+`cd /var/www/webapps/cargo_crev_web ; ./cargo_crev_web`  
 -- cargo_crev_web git fetch repo  
-`screen -S cargo_crev_web_git`  
-prepare credentials if needed (not for fetch)  
-`eval $(ssh-agent -s)`  
-`ssh-add ~/.ssh/bestia2_for_github`  
-schedule for every hour at xx:04 minutes  
+-- prepare credentials if needed (not for fetch)  
+`eval $(ssh-agent -s) ; ssh-add ~/.ssh/web_crev_dev_for_github`  
+-- schedule for every hour at xx:04 minutes  
 `foreground_scheduler 4 cargo-crev "crev repo fetch trusted"`  
-`ctrl+a d`  
-run the podman pod for webpage_hit_counter
-
-### Linux screen named instances
-
-To start a new session  
-`screen -S your_session_name`  
-
-To rename an existing session  
-`Ctrl+a, : sessionname YOUR_SESSION_NAME Enter`  
-
-List sessions  
-`screen -r`  
-
-Attach to session  
-`screen -r sessionname`  
-
-Detach  
-`Ctrl+a,d`  
+-- run webpage_hit_counter
+`cd bin/hit_counter_and_env; webpage_hit_counter`
 
 ## Containers and Podman
 
@@ -238,7 +210,7 @@ I don't use Docker anymore for Linux containers, but instead I use Podman. It ha
 It is important to understand the difference between images and containers.  
 The images are passive files you can copy around. They are like installation files. The containers are active running applications of these images.  
 First you have to build your own image. Usually an image is based on somebody others prepared image that you find on DockerHub.  
-To build an image I use Buildah, the companion of Podman. I never liked to use the old school dockerfiles. With Buildah you can run instructions step by step to create an image. Then this steps can be written in a simple bash script. Total control.  
+To build an image I use Buildah, the companion of Podman. I never liked to use the old school docker-files. With Buildah you can run instructions step by step to create an image. Then this steps can be written in a simple bash script. Total control.  
 
 ## IPv6
 
@@ -310,7 +282,7 @@ server {
 
 The procedure is as follows:
 
-1.Backup the system. google_cloud_vm snapshot.  
+1.Backup the system. GoogleCloud snapshot.  
 2.Update existing packages and reboot the Debian 10 system.  
 3.Edit the file /etc/apt/sources.list using a text editor and replace each instance of buster with bullseye.  
   Next find the security line, replace keyword   buster/updates with bullseye-security.  
@@ -348,14 +320,15 @@ cat /etc/issue
 cat /etc/debian_version
     11.3
 ```
+
 ## upgrade Debian 11 to 12
 
-https://www.cyberciti.biz/faq/update-upgrade-debian-11-to-debian-12-bookworm/
+<https://www.cyberciti.biz/faq/update-upgrade-debian-11-to-debian-12-bookworm/>
 
-1. backup - I did a Snapshot to Arhive of Google Compute Engine
+1. backup - I did a Snapshot to Archive of Google Compute Engine
 2. Update existing packages `sudo apt update` and `sudo apt upgrade` and `sudo reboot` the Debian 11 system.
-3. Edit the file `sudo nano /etc/apt/sources.list` 
-and replace each instance of `bullseye` with `bookworm`. 
+3. Edit the file `sudo nano /etc/apt/sources.list`
+and replace each instance of `bullseye` with `bookworm`.
 4. Update the packages index on  Debian Linux Linux, run: `sudo apt update`
 5. Prepare for the operating system minimal system upgrade, run: `sudo apt upgrade --without-new-pkgs`
 6. Finally, update  Debian 11 to Debian 12 Bookworm by running: `sudo apt full-upgrade`  
@@ -364,8 +337,8 @@ Later you can compare the old and new files and modify it accordingly.
 7. Reboot the Linux system `sudo reboot` so that you can boot into Debian 12 Bookworm
 8. Verify that everything is working correctly `lsb_release -a`, `cat /etc/debian_version`, `uname -mrs`
    `sudo systemctl status nginx.service`
-10. Free space `sudo apt --purge autoremove`
-11. Run podman pod for hit counter, Zellij for mem6, web.crev.dev and crev git
+9. Free space `sudo apt --purge autoremove`
+10. Run podman pod for hit counter, Zellij for mem6, web.crev.dev and crev git
 
 ## SSH from Debian as a directory mount
 
@@ -406,7 +379,7 @@ sudo du -a / | sort -n -r | head -n 20
 ## Remove Podman and pods for counter_hit and Postgres
 
 Podman pods for `counter_hit` and `Postgres 13` occupy too much space on my micro-limited disk 10 GB. Installing them normally on the Debian OS takes less space.  
-Remove pods, containers, images and podman. Be careful that the database data are in an external volume on the disk. 
+Remove pods, containers, images and podman. Be careful that the database data are in an external volume on the disk.
 
 ```bash
 podman pod list
@@ -506,7 +479,7 @@ https://openbasesystems.com/2023/06/20/postgresql-error-fatal-role-username-does
 from my old installation:
 
 -e POSTGRES_USER=admin \
-  -e POSTGRES_PASSWORD=Passw0rd \
+  -e POSTGRES_PASSWORD=password \
 
 id admin
 # not exist
@@ -530,10 +503,9 @@ exit
 The default folders for Postgres 13 data is: ``
 I already have data in the folder `~/postgres_data` and the backup in `postgres_backup`.  
 How to attach this folder to postgres13 ?
-https://www.squash.io/exploring-postgresql-check-db-dir-in-postgresql-databases/
+<https://www.squash.io/exploring-postgresql-check-db-dir-in-postgresql-databases/>
 Yes, you can change the default  database directory in  PostgreSQL by modifying the data_directory configuration parameter in the  postgresql.conf file. By default, the data directory is set to /var/lib/postgresql//main on Linux systems.
 sudo find / -name postgresql.conf
-
 
 /etc/postgresql/13/main/postgresql.conf
 /home/luciano_bestia/postgres_backup/before_upgrade/webpage_hit_counter_pod/postgresql.conf
@@ -544,7 +516,6 @@ the directory /etc/postgresql/13/main is for internal use by Postgres
 
 The default values of these variables are driven from the -D command-line
 option or PGDATA environment variable, represented here as ConfigDir.
-
 
 ## Open-source and free as a beer
 
